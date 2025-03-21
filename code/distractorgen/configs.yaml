@@ -1,0 +1,102 @@
+# Pretrained model dirs
+pretrain_model_dir_root: "./checkpoints/pretrain"
+pretrain_model_dir_suffix: "best_val_loss/lora_model"
+
+model_dir_e_given_s_d_metamath_mistral: "e_given_s_d/lively-elevator-1137"
+model_dir_e_given_s_metamath_mistral: "e_given_s/misty-elevator-1136"
+model_dir_d_given_s_e_metamath_mistral: "d_given_s_e/eager-oath-1138"
+
+model_dir_e_given_s_d_gpt2: "e_given_s_d/dainty-snowflake-654"
+model_dir_e_given_s_gpt2: "e_given_s/legendary-planet-653"
+model_dir_d_given_s_e_gpt2: "d_given_s_e/laced-fog-655"
+
+
+# Trainer
+model_name: "meta-math/MetaMath-Mistral-7B"
+
+
+# Data
+data_dir: "./data/20240701_cross_val/"
+cross_val_fold: 1
+topic_generalization: false
+num_workers: 0 # Num workers for data loader
+max_length: 2048
+num_distractors_per_question: 3
+exclude_unlabeled_samples: true
+drop_not_fully_labeled: false
+percent_drop_labels: 0 # Example: Use 20 for 20%, not 0.2
+
+
+# Optimization
+num_epochs: 1
+lr: 5e-6 # Same LR as MetaMath-Mistral-7B
+batch_size: 2 # Batch size train
+test_batch_size: 4 # Batch size val/test
+num_monte_carlo_samples: 4 # Effective batch size = batch_size * num_monte_carlo_samples * num_grad_accum_steps
+weight_loss_e_given_s: 1.0
+weight_loss_d_given_s_e: 1.0
+weight_loss_e_given_s_d: 1.0
+use_beta_kl: true # p(d|s,e) + beta*( KL( q(e|s,d) | p(e|s) ) )
+beta_kl: 0.1
+regularize_q: true # Regularization q(e|s,d) wrt q_ref(e|s,d)
+weight_loss_regularize_q: 0.95
+use_grad_clip: true
+grad_clip: 1.0
+num_grad_accum_steps: 8 # Effective batch size = batch_size * num_monte_carlo_samples * num_grad_accum_steps
+freeze_q: false
+freeze_likelihood: false
+freeze_prior: false
+
+
+# Generation
+max_new_tokens_error: 42 # Max number of error tokens across train and val is 42
+max_new_tokens_distractor: 184 # Max number of distractor tokens across train and val is 184
+do_sample_errors_train: true
+top_p: 0.95
+top_k: 50
+num_error_samples: 10
+num_distractor_samples: 10
+max_tries_multiplier: 3
+num_beams_distractor: 10
+num_beams_error: 10
+rank_with_distractor_scores_only: true
+rank: true # Rank or pool distractors
+diverse_beam_search_error_gen: true
+diversity_penalty: 1.0
+length_penalty: 1.0
+map_at_k: 0
+error_similarity: "rouge" # "sbert", "rouge", "bertscore", "gpt4"
+
+
+# Misc
+exp_name: "distractorgen"
+seed: 21
+use_cuda: true
+model_checkpoint_dir: "./checkpoints/distractorgen"
+results_dir: "./results/"
+
+
+# Logging
+log_wandb: true
+wandb_project: "error-representation-tokens"
+log_k_batches: true
+k_batches: 5
+
+
+# Soft error tokens
+anneal_temperature: true
+softmax_temperature: 0.1
+
+
+# Testing
+validation: false
+testing: false
+wandb_run_name: "kool_kat"
+use_base_models: false
+
+
+# Debugging
+debug: false # Debug with less data
+log_p_e_given_s: false # Log errors sampled from p(e|s)
+log_d_given_s_e: false # Log distractors sampled from p(d|s,e)
+log_q_ref_e_given_s_d: false # Log errors sampled from q_ref(e|s,d) to check if errors sampled from q(e|s,d) differ (implies q is being learned) from those sampled from q_ref(e|s,d)

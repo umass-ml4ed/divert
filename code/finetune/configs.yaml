@@ -1,0 +1,63 @@
+# Data
+data_dir: "./data/20240701_cross_val/"
+cross_val_fold: 1
+topic_generalization: false
+num_workers: 0 # Num workers for data loader
+max_length: 2048
+num_distractors_per_question: 3
+exclude_unlabeled_samples: true
+percent_drop_labels: 0 # Example: Use 20 for 20%, not 0.2
+
+
+# Optimization
+num_epochs: 5
+lr: 2e-5
+batch_size: 32 # Batch size train
+test_batch_size: 8 # Batch size val/test
+use_grad_clip: true
+grad_clip: 1.0
+
+
+# LoRA config
+lora_alpha: 256
+lora_dropout: 0.05
+lora_r: 128
+
+
+# Trainer
+model_name: "meta-math/MetaMath-Mistral-7B"
+
+
+# Misc
+exp_name: "pretrain"
+task_name: "e_given_s_d"
+seed: 21
+use_cuda: true
+debug: false # Debug with less data
+log_wandb: true # Log experiments to weights and biases
+wandb_project: "error-representation-tokens"
+model_checkpoint_dir: "./checkpoints/pretrain"
+results_dir: "./results/"
+
+
+# Generation
+max_new_tokens_error: 42 # Max number of error tokens across train and val is 42
+max_new_tokens_distractor: 184 # Max number of distractor tokens across train and val is 184
+top_p: 0.95
+top_k: 50
+num_distractor_samples: 10
+num_error_samples: 10
+max_tries_multiplier: 3
+num_beams: 10
+rank: true # Rank or pool distractors
+diverse_beam_search_error_gen: true
+diversity_penalty: 1.0
+length_penalty: 1.0
+zero_shot: false
+map_at_k: 0
+error_similarity: "rouge" # "sbert", "rouge", "bertscore", "gpt4"
+
+
+# Testing
+testing: false
+wandb_run_name: "kool_kat"

@@ -1,0 +1,15 @@
+*.csv
+*.DS_Store*
+*__pycache__*
+misc
+data/*
+checkpoints/*
+results/*
+wandb/*
+outputs
+scripts/*
+slurm/*
+plots/
+!checkpoints/.gitkeep
+!data/.gitkeep
+!results/.gitkeep
